@@ -13,4 +13,15 @@ internal struct NetworkFeedImage: Decodable {
 	let description: String?
 	let location: String?
 	let url: URL
+
+	private enum CodingKeys: String, CodingKey {
+		case id = "image_id"
+		case description = "image_desc"
+		case location = "image_loc"
+		case url = "image_url"
+	}
+}
+
+internal struct NetworkFeedImageContainer: Decodable {
+	let items: [NetworkFeedImage]
 }

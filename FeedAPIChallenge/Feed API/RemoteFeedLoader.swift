@@ -27,8 +27,13 @@ public final class RemoteFeedLoader: FeedLoader {
 					return
 				}
 				do {
-					let validData = try JSONDecoder().decode([NetworkFeedImage].self, from: data)
-					let feedImages = validData.map { FeedImage(
+					let validData = try JSONDecoder().decode(NetworkFeedImageContainer.self, from: data)
+					let feedImagesResult = validData.items
+					if feedImagesResult.isEmpty {
+						completion(.success([]))
+						return
+					}
+					let feedImages = feedImagesResult.map { FeedImage(
 						id: $0.id,
 						description: $0.description,
 						location: $0.location,
@@ -39,7 +44,6 @@ public final class RemoteFeedLoader: FeedLoader {
 					completion(.failure(Error.invalidData))
 					return
 				}
-
 			case .failure:
 				completion(.failure(Error.connectivity))
 			}
