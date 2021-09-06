@@ -20,6 +20,10 @@ internal struct NetworkFeedImage: Decodable {
 		case location = "image_loc"
 		case url = "image_url"
 	}
+
+	var feedImage: FeedImage {
+		return FeedImage(id: id, description: description, location: location, url: url)
+	}
 }
 
 internal struct NetworkFeedImageContainer: Decodable {
