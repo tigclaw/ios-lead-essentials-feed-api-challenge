@@ -30,9 +30,11 @@ internal class FeedImageMapper {
 	private struct NetworkFeedImageContainer: Decodable {
 		let items: [NetworkFeedImage]
 	}
+	
+	private static var OK_200: Int { 200 }
 
 	static func map(_ data: Data, _ response: HTTPURLResponse) throws -> [FeedImage] {
-		guard response.statusCode == 200 else {
+		guard response.statusCode == OK_200 else {
 			throw RemoteFeedLoader.Error.invalidData
 		}
 		do {
