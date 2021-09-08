@@ -8,7 +8,7 @@
 
 import Foundation
 
-internal final class FeedImageMapper {
+final class FeedImageMapper {
 	private struct NetworkFeedImage: Decodable {
 		let id: UUID
 		let description: String?
@@ -23,7 +23,7 @@ internal final class FeedImageMapper {
 		}
 	}
 
-	private struct NetworkFeedImageContainer: Decodable {
+	private struct Container: Decodable {
 		let items: [NetworkFeedImage]
 
 		var feedImages: [FeedImage] {
@@ -33,15 +33,12 @@ internal final class FeedImageMapper {
 
 	private static var OK_200: Int { 200 }
 
-	internal static func map(_ data: Data, _ response: HTTPURLResponse) -> FeedLoader.Result {
-		guard response.statusCode == OK_200 else {
+	private init() {}
+
+	static func map(_ data: Data, _ response: HTTPURLResponse) -> FeedLoader.Result {
+		guard response.statusCode == OK_200, let container = try? JSONDecoder().decode(Container.self, from: data) else {
 			return .failure(RemoteFeedLoader.Error.invalidData)
 		}
-		do {
-			let root = try JSONDecoder().decode(NetworkFeedImageContainer.self, from: data)
-			return .success(root.feedImages)
-		} catch {
-			return .failure(RemoteFeedLoader.Error.invalidData)
-		}
+		return .success(container.feedImages)
 	}
 }
